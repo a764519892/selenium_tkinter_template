@@ -29,7 +29,7 @@ def generate_code():
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-
+from selenium.webdriver.chrome.service import Service  # 导入 Service
 class Crawler:
     def __init__(self, url, xpath_ip, xpath_port):
         self.url = url
@@ -39,15 +39,18 @@ class Crawler:
 
     def start_driver(self):
         options = Options()
+        # options.add_argument('--headless')  # 无头模式，根据需要启用
         user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
         options.add_argument(f"user-agent="+user_agent)
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
         options.add_argument('--start-maximized')  # 启动时窗口最大化
-        self.driver = webdriver.Remote(
-            command_executor="http://localhost:4444/wd/hub",
-            options=options
-        )
+        # 指定 ChromeDriver 的路径
+        service = Service('D:/python/selenium/chromedriver-win64/chromedriver.exe')  # 替换为实际路径
+        # 指定 Chrome 浏览器的路径（如果有多个 Chrome 安装，需要指定）
+        options.binary_location = r'D:\python\selenium\chrome-win64\chrome.exe'  # 替换为实际 Chrome 安装路径
+        # 创建本地 WebDriver
+        self.driver = webdriver.Chrome(service=service, options=options)
 
     def fetch_ip_and_port(self):
         self.driver.get(self.url)
